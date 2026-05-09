@@ -12,6 +12,8 @@ const DEFAULT_USER_AGENT =
   process.env.REALPRIZE_USER_AGENT ||
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36";
 
+const DEFAULT_EVENT_ID = "3081716";
+
 const DEFAULT_STATUS_BODY = {
   f: "st",
   first_load: "0",
@@ -249,7 +251,9 @@ function writeEventIdToFile(eventId) {
 }
 
 function getConfiguredEventId() {
-  return String(process.env.REALPRIZE_EVENT_ID || readEventIdFromFile()).trim();
+  return String(
+    process.env.REALPRIZE_EVENT_ID || readEventIdFromFile() || DEFAULT_EVENT_ID
+  ).trim();
 }
 
 async function getAccountStatus() {
@@ -304,20 +308,7 @@ async function claimDailyBonus() {
     error: error.message,
   }));
   const configuredEventId = getConfiguredEventId();
-  let claimResponse;
-  let claimError = null;
-
-  try {
-    claimResponse = await claimDailyPrize({ eventId: configuredEventId });
-  } catch (error) {
-    claimError = error;
-
-    if (!configuredEventId) {
-      throw error;
-    }
-
-    claimResponse = await claimDailyPrize();
-  }
+  const claimResponse = await claimDailyPrize({ eventId: configuredEventId });
 
   const claimSummary = getClaimSummary(claimResponse);
 
@@ -333,7 +324,7 @@ async function claimDailyBonus() {
     ok: true,
     action: claimSummary.todayStatus === "claimed" ? "claimed" : "checked",
     usedEventId: configuredEventId || null,
-    retriedWithoutEventId: Boolean(claimError && configuredEventId),
+    retriedWithoutEventId: false,
     statusBefore,
     statusAfter,
     claimResponse,

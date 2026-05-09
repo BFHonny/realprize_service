@@ -23,7 +23,7 @@ Setze diese Variablen in Railway oder lokal per Env:
 | `REALPRIZE_AUTHORIZATION` | Kompletter `authorization`-Header aus dem Browser, falls vorhanden. | leer |
 | `REALPRIZE_ACCESS_TOKEN` | Reiner Token; der Service setzt automatisch `Bearer `. | leer |
 | `REALPRIZE_EXTRA_HEADERS_JSON` | Fallback fuer weitere Header als JSON. | leer |
-| `REALPRIZE_EVENT_ID` | Optionaler Daily-Event-Id Override. Aus der HAR: `3081716`. | leer |
+| `REALPRIZE_EVENT_ID` | Daily-Event-ID aus der HAR. | `3081716` |
 | `REALPRIZE_EVENT_ID_FILE` | Datei, in der die zuletzt erfolgreiche Event-ID gespeichert wird. | `/tmp/realprize-event-id.txt` |
 | `REALPRIZE_ALLOW_NO_AUTH` | Nur fuer Tests ohne Session. | `false` |
 | `REALPRIZE_TIMEZONE` | Zeitzone fuer Worker-Logs. | `Europe/Zurich` |
@@ -49,7 +49,7 @@ REALPRIZE_SUCCESS_INTERVAL_SEC=86400
 REALPRIZE_HEARTBEAT_INTERVAL_SEC=540
 ```
 
-`REALPRIZE_EVENT_ID` ist optional. Wenn der Claim ohne Event-ID funktioniert, kann die Variable leer bleiben. Falls RealPrize eine Event-ID verlangt, wird die HAR-ID als Startwert genutzt; erfolgreiche Claims speichern die aktuelle `event.id` in `REALPRIZE_EVENT_ID_FILE`.
+RealPrize verlangt eine Event-ID. Der Service nutzt `3081716` als Fallback, falls `REALPRIZE_EVENT_ID` und `REALPRIZE_EVENT_ID_FILE` leer sind. Erfolgreiche Claims speichern die aktuelle `event.id` in `REALPRIZE_EVENT_ID_FILE`.
 
 ## Lokale Nutzung
 
